@@ -5,7 +5,7 @@ import { Data as PlotlyData, Datum as PlotlyDatum } from 'plotly.js';
 import ExpressionsForm from './form/ExpressionsForm';
 import { FormValues } from './types';
 
-const createData = (expression: string): PlotlyData[] => {
+const createData = (expressions: string[]): PlotlyData[] => {
 
   interface Pair {
     x: PlotlyDatum;
@@ -21,19 +21,25 @@ const createData = (expression: string): PlotlyData[] => {
     y: Array<PlotlyDatum>;
   }
 
-  const evaluate = (f: string): Data => {
+  const evaluate = (expressions: string[]): Data => {
 
-    const list: Array<Pair> = [];
+    const retval: Data = { data: [] };
 
-    for (let x = -10.0; x < 10.1; x = x + 0.1) {
-      const func = eval(`x => ${f}`) as (x: number) => number;
-      const res = func(x);
-      if (!isNaN(res) && isFinite(res)) {
-        list.push({ x: x, y: res });
+    expressions.forEach(expression => {
+      const list: Array<Pair> = [];
+
+      for (let x = -10.0; x < 10.1; x = x + 0.1) {
+        const func = eval(`x => ${expression}`) as (x: number) => number;
+        const res = func(x);
+        if (!isNaN(res) && isFinite(res)) {
+          list.push({ x: x, y: res });
+        }
       }
-    }
 
-    return { data: [list] };
+      retval.data.push(list);
+    });
+
+    return retval;
   };
 
   const transform = (data: Data): Array<TransformedData> => {
@@ -48,7 +54,7 @@ const createData = (expression: string): PlotlyData[] => {
     return retval;
   }
 
-  const data = evaluate(expression);
+  const data = evaluate(expressions);
 
   const transformedDataObjects = transform(data);
 
@@ -65,12 +71,12 @@ const createData = (expression: string): PlotlyData[] => {
 }
 
 const App = () => {
-  const [fs, setFs] = useState<string>("Math.sqrt(x)");
+  const [fs, setFs] = useState<string[]>(["Math.sqrt(x)"]);
 
   const data = createData(fs);
 
   const plot = (values: FormValues) => {
-    setFs(values.expressions[0]);
+    setFs(values.expressions);
   }
 
   return (

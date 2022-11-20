@@ -31,7 +31,7 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
                     values.expressions.map((friend, index) => (
                       <div className="row" key={index}>
                         <div className="col">
-                          <label htmlFor={`expressions.${index}.name`}>f(x) = </label>
+                          <label htmlFor={`expressions.${index}`}>f {index} (x) = </label>
                           <Field
                             name={`expressions.${index}`}
                             placeholder="Math.sqrt(x)"
@@ -42,8 +42,6 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
                             component="div"
                             className="field-error"
                           />
-                        </div>
-                        <div className="col">
                           <button
                             type="button"
                             className="secondary"
