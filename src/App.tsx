@@ -5,51 +5,73 @@ import { Data as PlotlyData, Datum as PlotlyDatum } from 'plotly.js';
 import ExpressionsForm from './form/ExpressionsForm';
 import { FormValues } from './types';
 
+import { createBranches, Pair } from './service/evaluation'
+
 const createData = (expressions: string[]): PlotlyData[] => {
 
-  interface Pair {
-    x: PlotlyDatum;
-    y: PlotlyDatum;
-  }
-
-  interface Data {
-    data: Array<Array<Pair>>;
-  }
+  // first index: expression
+  // second index: branch
+  // third index: individual ordered pair
+  type Data = Pair[][][];
 
   interface TransformedData {
-    x: Array<PlotlyDatum>;
-    y: Array<PlotlyDatum>;
+    x: PlotlyDatum[];
+    y: PlotlyDatum[];
   }
 
   const evaluate = (expressions: string[]): Data => {
 
-    const retval: Data = { data: [] };
+    const retval: Data = [];
 
     expressions.forEach(expression => {
-      const list: Array<Pair> = [];
+      const func = eval(`x => ${expression}`) as (x: number) => number;
+      const branches: Pair[][] = createBranches(func);
 
-      for (let x = -10.0; x < 10.1; x = x + 0.1) {
-        const func = eval(`x => ${expression}`) as (x: number) => number;
-        const res = func(x);
-        if (!isNaN(res) && isFinite(res)) {
-          list.push({ x: x, y: res });
-        }
-      }
-
-      retval.data.push(list);
+      retval.push(branches);
     });
 
     return retval;
   };
 
-  const transform = (data: Data): Array<TransformedData> => {
-    const retval = data.data.map(
-      pairs => pairs.reduce<TransformedData>((accumulator, pair) => {
+  const transform = (data: Data): TransformedData[] => {
+
+    const addDataFromBranch = (branch: Pair[], transformedData: TransformedData) => {
+      branch.reduce<TransformedData>((accumulator, pair) => {
         accumulator.x.push(pair.x);
         accumulator.y.push(pair.y);
         return accumulator;
-      },
-        { x: [], y: [] }));
+      }, transformedData);
+    }
+
+    const retval = data.map(
+      branches => {
+        const transformed: TransformedData = {
+          x: [],
+          y: [],
+        };
+
+        if (branches.length === 0) {
+          return transformed;
+        }
+
+        addDataFromBranch(branches[0], transformed);
+
+        for (let branchIndex = 1; branchIndex < branches.length; branchIndex++) {
+
+          // add gap
+          const leftBranch = branches[branchIndex - 1];
+          const rightBranch = branches[branchIndex];
+          const leftX = leftBranch[leftBranch.length - 1].x;
+          const rightX = rightBranch[0].x;
+          const averageX = 0.5 * (leftX + rightX);
+          transformed.x.push(averageX);
+          transformed.y.push(null);
+
+          addDataFromBranch(rightBranch, transformed);
+        }
+
+        return transformed;
+      });
 
     return retval;
   }
@@ -63,7 +85,8 @@ const createData = (expressions: string[]): PlotlyData[] => {
       ...tdo,
       type: 'scatter',
       mode: 'lines',
-      marker: { color: 'red' }
+      marker: { color: 'red' },
+      connectgaps: false,
     }
   })
 
