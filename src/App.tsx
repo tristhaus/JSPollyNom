@@ -6,7 +6,7 @@ import ExpressionsForm from './form/ExpressionsForm';
 import { FormValues } from './types';
 
 import { createBranches, Data, Pair, transform } from './service/evaluation';
-import { Dot, generateDots, getDotsWithStatus } from './service/dot';
+import { calculateScore, Dot, generateDots, getDotsWithStatus } from './service/dot';
 
 const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], rawData: Data } => {
 
@@ -41,16 +41,17 @@ const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], raw
       ...tdo,
       type: 'scatter',
       mode: 'lines',
-      name: `f ${index}`,
+      name: `f ${index + 1}`,
       marker: { color: graphColors[index] },
       connectgaps: false,
+      showlegend: true,
     };
   });
 
   return { plotlyData: decoratedGraphData, rawData: graphData };
 };
 
-const createDotShapes = (goodDots: Dot[], badDots: Dot[], data: Data): Partial<PlotlyShape>[] => {
+const getDotInformation = (goodDots: Dot[], badDots: Dot[], data: Data): { shapes: Partial<PlotlyShape>[], score: number } => {
 
   const createDotShape = (dot: Dot, color: string): Partial<PlotlyShape> => {
     return {
@@ -71,14 +72,16 @@ const createDotShapes = (goodDots: Dot[], badDots: Dot[], data: Data): Partial<P
 
   const dots = getDotsWithStatus(goodDots, badDots, data);
 
-  const retval: Partial<PlotlyShape>[] = [
+  const score = calculateScore(dots);
+
+  const shapes: Partial<PlotlyShape>[] = [
     ...dots.goodActive.map(dot => createDotShape(dot, '#00008B')),   // DarkBlue 
     ...dots.goodInactive.map(dot => createDotShape(dot, '#ADD8E6')), // LightBlue
     ...dots.badActive.map(dot => createDotShape(dot, '#FF4500')),    // OrangeRed
     ...dots.badInactive.map(dot => createDotShape(dot, '#FFB6C1'))   // LightPink
   ];
 
-  return retval;
+  return { shapes: shapes, score: score };
 };
 
 const App = () => {
@@ -94,7 +97,7 @@ const App = () => {
 
   const { plotlyData, rawData } = createGraphData(fs);
 
-  const shapes = createDotShapes(goodDots, badDots,rawData);
+  const { shapes, score } = getDotInformation(goodDots, badDots, rawData);
 
   const plot = (values: FormValues) => {
     setFs(values.expressions);
@@ -107,7 +110,11 @@ const App = () => {
         layout={{
           width: 500,
           height: 500,
-          title: 'Plot based on eval',
+          title: `Plot based on JavaScript eval(), score: ${score}`,
+          legend: {
+            itemclick: false,
+            itemdoubleclick: false,
+          },
           xaxis: {
             range: [-10, 10]
           },
@@ -118,6 +125,9 @@ const App = () => {
             remove: ['autoScale2d', 'lasso2d', 'pan2d', 'select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d'],
           },
           shapes: shapes,
+        }}
+        config={{
+          doubleClick: 'reset',
         }}
       />
       <ExpressionsForm onSubmit={plot} />
