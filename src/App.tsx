@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { Data as PlotlyData, Shape as PlotlyShape } from 'plotly.js';
 
@@ -6,7 +6,7 @@ import ExpressionsForm from './form/ExpressionsForm';
 import { FormValues } from './types';
 
 import { createBranches, Data, Pair, transform } from './service/evaluation';
-import { Dot, getDotsWithStatus } from './service/dot';
+import { Dot, generateDots, getDotsWithStatus } from './service/dot';
 
 const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], rawData: Data } => {
 
@@ -50,7 +50,7 @@ const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], raw
   return { plotlyData: decoratedGraphData, rawData: graphData };
 };
 
-const createDotShapes = (data: Data): Partial<PlotlyShape>[] => {
+const createDotShapes = (goodDots: Dot[], badDots: Dot[], data: Data): Partial<PlotlyShape>[] => {
 
   const createDotShape = (dot: Dot, color: string): Partial<PlotlyShape> => {
     return {
@@ -69,13 +69,13 @@ const createDotShapes = (data: Data): Partial<PlotlyShape>[] => {
     };
   };
 
-  const dots = getDotsWithStatus(data);
+  const dots = getDotsWithStatus(goodDots, badDots, data);
 
   const retval: Partial<PlotlyShape>[] = [
-    ...dots.GoodActive.map(dot => createDotShape(dot, '#00008B')),   // DarkBlue 
-    ...dots.GoodInactive.map(dot => createDotShape(dot, '#ADD8E6')), // LightBlue
-    ...dots.BadActive.map(dot => createDotShape(dot, '#FF4500')),    // OrangeRed
-    ...dots.BadInactive.map(dot => createDotShape(dot, '#FFB6C1'))   // LightPink
+    ...dots.goodActive.map(dot => createDotShape(dot, '#00008B')),   // DarkBlue 
+    ...dots.goodInactive.map(dot => createDotShape(dot, '#ADD8E6')), // LightBlue
+    ...dots.badActive.map(dot => createDotShape(dot, '#FF4500')),    // OrangeRed
+    ...dots.badInactive.map(dot => createDotShape(dot, '#FFB6C1'))   // LightPink
   ];
 
   return retval;
@@ -83,10 +83,18 @@ const createDotShapes = (data: Data): Partial<PlotlyShape>[] => {
 
 const App = () => {
   const [fs, setFs] = useState<string[]>(["Math.sqrt(x)"]);
+  const [goodDots, setGoodDots] = useState<Dot[]>([]);
+  const [badDots, setBadDots] = useState<Dot[]>([]);
+
+  useEffect(() => {
+    const { goodDots, badDots } = generateDots();
+    setGoodDots(goodDots);
+    setBadDots(badDots);
+  }, []);
 
   const { plotlyData, rawData } = createGraphData(fs);
 
-  const shapes = createDotShapes(rawData);
+  const shapes = createDotShapes(goodDots, badDots,rawData);
 
   const plot = (values: FormValues) => {
     setFs(values.expressions);
