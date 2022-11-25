@@ -44,4 +44,4 @@ export const getDotsWithStatus = (data: Data): Dots => {
       { x: 4.0, y: (2.0 + 4.0), radius: defaultRadius },
     ]
   };
-}
+};

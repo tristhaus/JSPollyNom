@@ -5,8 +5,8 @@ import { Data as PlotlyData, Shape as PlotlyShape } from 'plotly.js';
 import ExpressionsForm from './form/ExpressionsForm';
 import { FormValues } from './types';
 
-import { createBranches, Data, Pair, transform } from './service/evaluation'
-import { Dot, getDotsWithStatus } from './service/dot'
+import { createBranches, Data, Pair, transform } from './service/evaluation';
+import { Dot, getDotsWithStatus } from './service/dot';
 
 const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], rawData: Data } => {
 
@@ -34,7 +34,7 @@ const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], raw
     '#9400D3', // DarkViolet
     '#A52A2A', // Brown
     '#B0E0E6'  // PowderBlue
-  ]
+  ];
 
   const decoratedGraphData = transformedGraphData.map<PlotlyData>((tdo, index) => {
     return {
@@ -44,11 +44,11 @@ const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], raw
       name: `f ${index}`,
       marker: { color: graphColors[index] },
       connectgaps: false,
-    }
-  })
+    };
+  });
 
   return { plotlyData: decoratedGraphData, rawData: graphData };
-}
+};
 
 const createDotShapes = (data: Data): Partial<PlotlyShape>[] => {
 
@@ -66,8 +66,8 @@ const createDotShapes = (data: Data): Partial<PlotlyShape>[] => {
       line: {
         color: color,
       },
-    }
-  }
+    };
+  };
 
   const dots = getDotsWithStatus(data);
 
@@ -76,10 +76,10 @@ const createDotShapes = (data: Data): Partial<PlotlyShape>[] => {
     ...dots.GoodInactive.map(dot => createDotShape(dot, '#ADD8E6')), // LightBlue
     ...dots.BadActive.map(dot => createDotShape(dot, '#FF4500')),    // OrangeRed
     ...dots.BadInactive.map(dot => createDotShape(dot, '#FFB6C1'))   // LightPink
-  ]
+  ];
 
   return retval;
-}
+};
 
 const App = () => {
   const [fs, setFs] = useState<string[]>(["Math.sqrt(x)"]);
@@ -90,7 +90,7 @@ const App = () => {
 
   const plot = (values: FormValues) => {
     setFs(values.expressions);
-  }
+  };
 
   return (
     <div>
@@ -115,6 +115,6 @@ const App = () => {
       <ExpressionsForm onSubmit={plot} />
     </div>
   );
-}
+};
 
 export default App;

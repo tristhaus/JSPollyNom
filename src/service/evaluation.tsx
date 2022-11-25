@@ -36,7 +36,7 @@ const LargeIncrement = 1e-2;
 
 const isValidResult = (result: number): boolean => {
   return !isNaN(result) && isFinite(result);
-}
+};
 
 const forwardX = (x: number): number => x;
 const backwardX = (x: number): number => -x;
@@ -86,7 +86,7 @@ const workAnInterval = (func: (x: number) => number, direction: (x: number) => n
   }
 
   return { branch: branch, lastValidXinCurrentInterval: xOld, x: x };
-}
+};
 
 export const createBranches = (func: (x: number) => number): Pair[][] => {
 
@@ -120,7 +120,7 @@ export const createBranches = (func: (x: number) => number): Pair[][] => {
     lastXinPreviousInterval = forwardResult.lastValidXinCurrentInterval;
     x = forwardResult.x;
 
-    retval.push(backwardResult.branch.concat(forwardResult.branch).sort((a, b) => a.x - b.x))
+    retval.push(backwardResult.branch.concat(forwardResult.branch).sort((a, b) => a.x - b.x));
   }
 
   // todo: check if we cannot have empty retval
@@ -136,7 +136,7 @@ export const transform = (data: Data): TransformedData[] => {
       accumulator.y.push(pair.y);
       return accumulator;
     }, transformedData);
-  }
+  };
 
   const retval = data.map(
     branches => {
@@ -169,4 +169,4 @@ export const transform = (data: Data): TransformedData[] => {
     });
 
   return retval;
-}
+};
