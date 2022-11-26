@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JSPollyNom",
+  "name": "JSPollyNom: a math teaching tool pretending to be a game with levels",
   "icons": [
     {
       "src": "favicon.ico",

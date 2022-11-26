@@ -44,7 +44,6 @@ const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], raw
       name: `f ${index + 1}`,
       marker: { color: graphColors[index] },
       connectgaps: false,
-      showlegend: true,
     };
   });
 

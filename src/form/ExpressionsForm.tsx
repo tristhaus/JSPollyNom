@@ -25,13 +25,13 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
         return (
           <Form className="form ui">
             <FieldArray name="expressions">
-              {({ remove, push }) => (
+              {() => (
                 <div>
                   {values.expressions.length > 0 &&
                     values.expressions.map((friend, index) => (
                       <div className="row" key={index}>
                         <div className="col">
-                          <label htmlFor={`expressions.${index}`}>f {index + 1} (x) = </label>
+                          <label htmlFor={`expressions.${index}`}>f(x) = </label>
                           <Field
                             name={`expressions.${index}`}
                             placeholder="Math.sqrt(x)"
@@ -42,23 +42,9 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
                             component="div"
                             className="field-error"
                           />
-                          <button
-                            type="button"
-                            className="secondary"
-                            onClick={() => remove(index)}
-                          >
-                            X
-                          </button>
                         </div>
                       </div>
                     ))}
-                  <button
-                    type="button"
-                    className="secondary"
-                    onClick={() => push('')}
-                  >
-                    Add expression
-                  </button>
                 </div>
               )}
             </FieldArray>
