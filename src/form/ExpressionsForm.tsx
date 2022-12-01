@@ -30,9 +30,10 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
                   {values.expressions.length > 0 &&
                     values.expressions.map((friend, index) => (
                       <div className="row" key={index}>
-                        <div className="col">
+                        <div className="col centering">
                           <label htmlFor={`expressions.${index}`}>f(x) = </label>
                           <Field
+                            style={{ width: '70%' }}
                             name={`expressions.${index}`}
                             placeholder="Math.sqrt(x)"
                             type="text"
@@ -48,7 +49,9 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
                 </div>
               )}
             </FieldArray>
-            <button type="submit">Plot</button>
+            <div className='centering'>
+              <button className='plotButton' type="submit">Plot</button>
+            </div>
           </Form>
         );
       }}

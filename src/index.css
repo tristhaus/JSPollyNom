@@ -1,3 +1,12 @@
 * {
   font-family: Tahoma, 'Segoe UI', Geneva, Verdana, sans-serif;
 }
+
+.centering {
+  text-align: center;
+}
+
+.plotButton {
+  margin-top: 10px;
+  padding: 5px 10px;
+}
