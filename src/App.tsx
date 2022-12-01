@@ -104,31 +104,35 @@ const App = () => {
 
   return (
     <div>
-      <Plot
-        data={plotlyData}
-        layout={{
-          width: 500,
-          height: 500,
-          title: `Plot based on JavaScript eval(), score: ${score}`,
-          legend: {
-            itemclick: false,
-            itemdoubleclick: false,
-          },
-          xaxis: {
-            range: [-10, 10]
-          },
-          yaxis: {
-            range: [-10, 10]
-          },
-          modebar: {
-            remove: ['autoScale2d', 'lasso2d', 'pan2d', 'select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d'],
-          },
-          shapes: shapes,
-        }}
-        config={{
-          doubleClick: 'reset',
-        }}
-      />
+      <div style={{ height: 0, width: '100%', paddingBottom: '100%', position: 'relative' }}>
+        <Plot
+          data={plotlyData}
+          layout={{
+            title: `score: ${score}`,
+            legend: {
+              itemclick: false,
+              itemdoubleclick: false,
+            },
+            xaxis: {
+              range: [-10, 10]
+            },
+            yaxis: {
+              range: [-10, 10],
+              scaleanchor: 'x',
+            },
+            modebar: {
+              remove: ['autoScale2d', 'lasso2d', 'pan2d', 'select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d'],
+            },
+            shapes: shapes,
+            autosize: true,
+          }}
+          config={{
+            doubleClick: 'reset',
+            responsive: true,
+          }}
+          style={{ position: 'absolute', width: '100%', height: '100%' }}
+        />
+      </div>
       <ExpressionsForm onSubmit={plot} />
     </div>
   );
