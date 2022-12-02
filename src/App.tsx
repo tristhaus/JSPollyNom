@@ -7,6 +7,8 @@ import { FormValues } from './types';
 
 import { createBranches, Data, Pair, transform } from './service/evaluation';
 import { calculateScore, Dot, generateDots, getDotsWithStatus } from './service/dot';
+import OverlayMessageBox from './components/OverlayMessageBox';
+import HelpContent from './components/HelpContent';
 
 const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], rawData: Data } => {
 
@@ -84,6 +86,7 @@ const getDotInformation = (goodDots: Dot[], badDots: Dot[], data: Data): { shape
 };
 
 const App = () => {
+  const [showHelp, setShowHelp] = useState<boolean>(false);
   const [fs, setFs] = useState<string[]>(["Math.sqrt(x)"]);
   const [goodDots, setGoodDots] = useState<Dot[]>([]);
   const [badDots, setBadDots] = useState<Dot[]>([]);
@@ -102,8 +105,18 @@ const App = () => {
     setFs(values.expressions);
   };
 
+  const handleToggleShowHelp = () => {
+    setShowHelp(!showHelp);
+  };
+
   return (
     <div>
+      <div>
+        <button className="helpButton" onClick={() => handleToggleShowHelp()}>?</button>
+      </div>
+      {showHelp && (<OverlayMessageBox label="OK" action={() => handleToggleShowHelp()} beModal={false}>
+        <HelpContent />
+      </OverlayMessageBox>)}
       <div style={{ height: 0, width: '100%', paddingBottom: '100%', position: 'relative' }}>
         <Plot
           data={plotlyData}
