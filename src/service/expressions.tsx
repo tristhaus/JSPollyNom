@@ -8,6 +8,16 @@ export class X implements Expression {
   evaluate(x: number): number | null {
     return x;
   }
+
+  expressionType = "x";
+
+  isEquivalentTo(other: Expression): boolean {
+    const isX = (candidate: Expression): candidate is X => {
+      return candidate.expressionType === this.expressionType;
+    };
+
+    return isX(other);
+  }
 }
 
 export class Constant implements Expression {
@@ -21,7 +31,32 @@ export class Constant implements Expression {
   evaluate(x: number): number | null {
     return this.c;
   }
+
+  expressionType = "constant";
+
+  isEquivalentTo(other: Expression): boolean {
+    const isConstant = (candidate: Expression): candidate is Constant => {
+      return candidate.expressionType === this.expressionType;
+    };
+
+    return isConstant(other) && other.c === this.c;
+  }
 }
+
+const areEquivalentUnorderedMultiSets = <T extends { expression: Expression }>(a: T[], b: T[], characterSelector: (arg: T) => boolean): boolean => {
+  while (a.length > 0) {
+    const right = a.pop() as T;
+    const leftIndex = b.findIndex(value => characterSelector(value) === characterSelector(right) && value.expression.isEquivalentTo(right.expression));
+
+    if (leftIndex === -1) {
+      return false;
+    }
+
+    b.splice(leftIndex, 1);
+  }
+
+  return b.length === 0;
+};
 
 export class Summand {
   public readonly isPositive: boolean;
@@ -48,6 +83,23 @@ export class Sum implements Expression {
     });
 
     return results.some(result => result === null) ? null : results.reduce<number>((prev, current) => prev + (current ?? 0), 0);
+  }
+
+  expressionType = "sum";
+
+  isEquivalentTo(other: Expression): boolean {
+    const isSum = (candidate: Expression): candidate is Sum => {
+      return candidate.expressionType === this.expressionType;
+    };
+
+    if (!isSum(other)) {
+      return false;
+    }
+
+    const a = [...other.summands];
+    const b = [... this.summands];
+
+    return areEquivalentUnorderedMultiSets(a, b, summand => summand.isPositive);
   }
 }
 
@@ -86,6 +138,23 @@ export class Product implements Expression {
 
     return results.some(result => result === null) ? null : results.reduce<number>((prev, current) => prev * (current ?? 0), 1);
   }
+
+  expressionType = "product";
+
+  isEquivalentTo(other: Expression): boolean {
+    const isProduct = (candidate: Expression): candidate is Product => {
+      return candidate.expressionType === this.expressionType;
+    };
+
+    if (!isProduct(other)) {
+      return false;
+    }
+
+    const a = [...other.factors];
+    const b = [... this.factors];
+
+    return areEquivalentUnorderedMultiSets(a, b, factor => factor.isMultiplication);
+  }
 }
 
 export class Power implements Expression {
@@ -114,14 +183,41 @@ export class Power implements Expression {
 
     return isValidResult(result) ? result : null;
   }
+
+  expressionType = "power";
+
+  isEquivalentTo(other: Expression): boolean {
+    const isPower = (candidate: Expression): candidate is Power => {
+      return candidate.expressionType === this.expressionType;
+    };
+
+    return isPower(other) && other.base.isEquivalentTo(this.base) && other.exponent.isEquivalentTo(this.exponent);
+  }
 }
 
-export class AbsoluteValue implements Expression {
-  private readonly argument: Expression;
+abstract class SingleArgumentFunction implements Expression {
+  protected abstract readonly argument: Expression;
+  abstract evaluate(x: number): number | null;
+
+  abstract readonly expressionType: string;
+  isEquivalentTo(other: Expression): boolean {
+    const isMatchingSingleArgumentFunction = (candidate: Expression): candidate is SingleArgumentFunction => {
+      return candidate.expressionType === this.expressionType;
+    };
+
+    return isMatchingSingleArgumentFunction(other) && other.argument.isEquivalentTo(this.argument);
+  }
+}
+
+export class AbsoluteValue extends SingleArgumentFunction {
+  protected readonly argument: Expression;
 
   constructor(argument: Expression) {
+    super();
     this.argument = argument;
   }
+
+  expressionType = "saf_abs";
 
   evaluate(x: number): number | null {
     const argumentResult = this.argument.evaluate(x);
@@ -130,12 +226,15 @@ export class AbsoluteValue implements Expression {
   }
 }
 
-export class Sine implements Expression {
-  private readonly argument: Expression;
+export class Sine extends SingleArgumentFunction {
+  protected readonly argument: Expression;
 
   constructor(argument: Expression) {
+    super();
     this.argument = argument;
   }
+
+  expressionType = "saf_sin";
 
   evaluate(x: number): number | null {
     const argumentResult = this.argument.evaluate(x);
@@ -144,12 +243,15 @@ export class Sine implements Expression {
   }
 }
 
-export class Cosine implements Expression {
-  private readonly argument: Expression;
+export class Cosine extends SingleArgumentFunction {
+  protected readonly argument: Expression;
 
   constructor(argument: Expression) {
+    super();
     this.argument = argument;
   }
+
+  expressionType = "saf_cos";
 
   evaluate(x: number): number | null {
     const argumentResult = this.argument.evaluate(x);
@@ -158,12 +260,15 @@ export class Cosine implements Expression {
   }
 }
 
-export class Tangent implements Expression {
-  private readonly argument: Expression;
+export class Tangent extends SingleArgumentFunction {
+  protected readonly argument: Expression;
 
   constructor(argument: Expression) {
+    super();
     this.argument = argument;
   }
+
+  expressionType = "saf_tan";
 
   evaluate(x: number): number | null {
     const argumentResult = this.argument.evaluate(x);
@@ -178,12 +283,15 @@ export class Tangent implements Expression {
   }
 }
 
-export class NaturalExponential implements Expression {
-  private readonly argument: Expression;
+export class NaturalExponential extends SingleArgumentFunction {
+  protected readonly argument: Expression;
 
   constructor(argument: Expression) {
+    super();
     this.argument = argument;
   }
+
+  expressionType = "saf_exp";
 
   evaluate(x: number): number | null {
     const argumentResult = this.argument.evaluate(x);
@@ -192,12 +300,15 @@ export class NaturalExponential implements Expression {
   }
 }
 
-export class NaturalLogarithm implements Expression {
-  private readonly argument: Expression;
+export class NaturalLogarithm extends SingleArgumentFunction {
+  protected readonly argument: Expression;
 
   constructor(argument: Expression) {
+    super();
     this.argument = argument;
   }
+
+  expressionType = "saf_ln";
 
   evaluate(x: number): number | null {
     const argumentResult = this.argument.evaluate(x);

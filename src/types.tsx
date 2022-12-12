@@ -3,5 +3,7 @@ export interface FormValues {
 }
 
 export interface Expression {
-  evaluate: (x: number) => number | null;
+  evaluate(x: number): number | null;
+  isEquivalentTo(other: Expression): boolean;
+  readonly expressionType: string;
 }
