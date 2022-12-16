@@ -1,4 +1,4 @@
-import { AbsoluteValue, Constant, Cosine, Factor, NaturalExponential, NaturalLogarithm, Power, Product, Sine, Sum, Summand, Tangent, X } from '../service/expressions';
+import { AbsoluteValue, Constant, Cosine, Factor, NaturalExponential, NaturalLogarithm, Power, Product, Sine, SquareRoot, Sum, Summand, Tangent, X } from '../service/expressions';
 
 test('X === X', () => {
   const x1 = new X();
@@ -145,7 +145,7 @@ test('x^1 !== x', () => {
   expect(power.isEquivalentTo(x)).toBe(false);
 });
 
-test('abs shall correctly implment equivalence', () => {
+test('abs shall correctly implement equivalence', () => {
   const x = new X();
   const c = new Constant(0.42);
   const abs1 = new AbsoluteValue(x);
@@ -157,7 +157,7 @@ test('abs shall correctly implment equivalence', () => {
   expect(abs1.isEquivalentTo(abs3)).toBe(false);
 });
 
-test('sin shall correctly implment equivalence', () => {
+test('sin shall correctly implement equivalence', () => {
   const x = new X();
   const c = new Constant(0.42);
   const sin1 = new Sine(x);
@@ -169,7 +169,7 @@ test('sin shall correctly implment equivalence', () => {
   expect(sin1.isEquivalentTo(sin3)).toBe(false);
 });
 
-test('cos shall correctly implment equivalence', () => {
+test('cos shall correctly implement equivalence', () => {
   const x = new X();
   const c = new Constant(0.42);
   const cos1 = new Cosine(x);
@@ -181,7 +181,7 @@ test('cos shall correctly implment equivalence', () => {
   expect(cos1.isEquivalentTo(cos3)).toBe(false);
 });
 
-test('tan shall correctly implment equivalence', () => {
+test('tan shall correctly implement equivalence', () => {
   const x = new X();
   const c = new Constant(0.42);
   const tan1 = new Tangent(x);
@@ -193,7 +193,7 @@ test('tan shall correctly implment equivalence', () => {
   expect(tan1.isEquivalentTo(tan3)).toBe(false);
 });
 
-test('exp shall correctly implment equivalence', () => {
+test('exp shall correctly implement equivalence', () => {
   const x = new X();
   const c = new Constant(0.42);
   const exp1 = new NaturalExponential(x);
@@ -205,7 +205,7 @@ test('exp shall correctly implment equivalence', () => {
   expect(exp1.isEquivalentTo(exp3)).toBe(false);
 });
 
-test('ln shall correctly implment equivalence', () => {
+test('ln shall correctly implement equivalence', () => {
   const x = new X();
   const c = new Constant(0.42);
   const ln1 = new NaturalLogarithm(x);
@@ -215,4 +215,16 @@ test('ln shall correctly implment equivalence', () => {
   expect(ln1.isEquivalentTo(ln1)).toBe(true);
   expect(ln1.isEquivalentTo(ln2)).toBe(true);
   expect(ln1.isEquivalentTo(ln3)).toBe(false);
+});
+
+test('sqrt shall correctly implement equivalence', () => {
+  const x = new X();
+  const c = new Constant(0.42);
+  const root1 = new SquareRoot(x);
+  const root2 = new SquareRoot(x);
+  const root3 = new SquareRoot(c);
+
+  expect(root1.isEquivalentTo(root1)).toBe(true);
+  expect(root1.isEquivalentTo(root2)).toBe(true);
+  expect(root1.isEquivalentTo(root3)).toBe(false);
 });

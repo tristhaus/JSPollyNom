@@ -322,3 +322,27 @@ export class NaturalLogarithm extends SingleArgumentFunction {
     return isValidResult(result) ? result : null;
   }
 }
+
+export class SquareRoot extends SingleArgumentFunction {
+  protected readonly argument: Expression;
+
+  constructor(argument: Expression) {
+    super();
+    this.argument = argument;
+  }
+
+  expressionType = "saf_sqrt";
+
+  evaluate(x: number): number | null {
+    const argumentResult = this.argument.evaluate(x);
+
+    if (argumentResult === null) {
+      return null;
+    }
+
+    const result = Math.sqrt(argumentResult);
+
+    return isValidResult(result) ? result : null;
+  }
+}
+

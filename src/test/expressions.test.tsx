@@ -1,4 +1,4 @@
-import { AbsoluteValue, Constant, Cosine, Factor, NaturalExponential, NaturalLogarithm, Power, Product, Sine, Sum, Summand, Tangent, X } from '../service/expressions';
+import { AbsoluteValue, Constant, Cosine, Factor, NaturalExponential, NaturalLogarithm, Power, Product, Sine, SquareRoot, Sum, Summand, Tangent, X } from '../service/expressions';
 
 test('X yields given value', () => {
   const x = new X();
@@ -148,4 +148,15 @@ test('NaturalLogarithm yields correct value', () => {
   expect(theFunction.evaluate(0.0)).toBeNull();
   expect(theFunction.evaluate(1.0)).toBeCloseTo(0.0);
   expect(theFunction.evaluate(Math.E)).toBeCloseTo(1.0);
+});
+
+test('SquareRoot yields correct value', () => {
+  const x = new X();
+
+  const theFunction = new SquareRoot(x);
+
+  expect(theFunction.evaluate(-1.0)).toBeNull();
+  expect(theFunction.evaluate(0.0)).toBeCloseTo(0.0);
+  expect(theFunction.evaluate(1.0)).toBeCloseTo(1.0);
+  expect(theFunction.evaluate(4.0)).toBeCloseTo(2.0);
 });
