@@ -9,6 +9,7 @@ import { createBranches, Data, Pair, transform } from './service/evaluation';
 import { calculateScore, Dot, generateDots, getDotsWithStatus } from './service/dot';
 import OverlayMessageBox from './components/OverlayMessageBox';
 import HelpContent from './components/HelpContent';
+import { parse } from './service/parser';
 
 const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], rawData: Data } => {
 
@@ -17,8 +18,8 @@ const createGraphData = (expressions: string[]): { plotlyData: PlotlyData[], raw
     const retval: Data = [];
 
     expressions.forEach(expression => {
-      const func = eval(`x => ${expression}`) as (x: number) => number;
-      const branches: Pair[][] = createBranches(func);
+      const func = parse(expression);
+      const branches: Pair[][] = func ? createBranches(func) : [];
 
       retval.push(branches);
     });
@@ -87,7 +88,7 @@ const getDotInformation = (goodDots: Dot[], badDots: Dot[], data: Data): { shape
 
 const App = () => {
   const [showHelp, setShowHelp] = useState<boolean>(false);
-  const [fs, setFs] = useState<string[]>(["Math.sqrt(x)"]);
+  const [fs, setFs] = useState<string[]>(["sqrt(x^3)"]);
   const [goodDots, setGoodDots] = useState<Dot[]>([]);
   const [badDots, setBadDots] = useState<Dot[]>([]);
 

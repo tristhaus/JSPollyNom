@@ -1,4 +1,5 @@
 import { Datum as PlotlyDatum } from 'plotly.js';
+import { Expression } from '../types';
 
 export interface Pair {
   x: number;
@@ -34,8 +35,8 @@ const InitialIncrement = 1e-3;
 // LargeIncrement is the increment to find branches.
 const LargeIncrement = 1e-2;
 
-const isValidResult = (result: number): boolean => {
-  return !isNaN(result) && isFinite(result);
+const isValidResult = (result: number | null): result is number => {
+  return result !== null && !isNaN(result) && isFinite(result);
 };
 
 const forwardX = (x: number): number => x;
@@ -43,15 +44,15 @@ const backwardX = (x: number): number => -x;
 
 const squareDistance = (x1: number, y1: number, x2: number, y2: number): number => (x1 - x2) ** 2 + (y1 - y2) ** 2;
 
-const workAnInterval = (func: (x: number) => number, direction: (x: number) => number, xInCurrentInterval: number): { branch: Pair[], lastValidXinCurrentInterval: number, x: number } => {
+const workAnInterval = (expression: Expression, direction: (x: number) => number, xInCurrentInterval: number): { branch: Pair[], lastValidXinCurrentInterval: number, x: number } => {
   const branch: Pair[] = [];
 
   let x = xInCurrentInterval + direction(Epsilon);
-  let yOptional = func(x);
+  let yOptional = expression.evaluate(x);
   let xOld = xInCurrentInterval;
 
   let y = isValidResult(yOptional) ? yOptional : 0.0;
-  let yOld = isValidResult(yOptional) ? yOptional : func(xInCurrentInterval); // func(xInCurrentInterval) must be valid
+  let yOld = isValidResult(yOptional) ? yOptional : expression.evaluate(xInCurrentInterval) as number; // func(xInCurrentInterval) must be valid
 
   let incr = InitialIncrement;
 
@@ -59,10 +60,10 @@ const workAnInterval = (func: (x: number) => number, direction: (x: number) => n
   let interrupt = false;
   while (!interrupt) {
     interrupt = true;
-    yOptional = func(x);
+    yOptional = expression.evaluate(x);
 
     if (isValidResult(yOptional)) {
-      y = yOptional;
+      y = yOptional as number;
       interrupt = !(minX <= x && x <= maxX && -Limit <= y && y <= Limit);
     }
 
@@ -88,7 +89,7 @@ const workAnInterval = (func: (x: number) => number, direction: (x: number) => n
   return { branch: branch, lastValidXinCurrentInterval: xOld, x: x };
 };
 
-export const createBranches = (func: (x: number) => number): Pair[][] => {
+export const createBranches = (expression: Expression): Pair[][] => {
 
   let lastXinPreviousInterval = minX;
   let x = lastXinPreviousInterval;
@@ -101,7 +102,7 @@ export const createBranches = (func: (x: number) => number): Pair[][] => {
     let foundInterval = false;
     while (!foundInterval && xInCurrentInterval < maxX) {
       xInCurrentInterval += LargeIncrement;
-      const result = func(xInCurrentInterval);
+      const result = expression.evaluate(xInCurrentInterval);
       foundInterval = isValidResult(result);
     }
 
@@ -111,10 +112,10 @@ export const createBranches = (func: (x: number) => number): Pair[][] => {
     }
 
     // work inside interval - backward
-    const backwardResult = workAnInterval(func, backwardX, xInCurrentInterval);
+    const backwardResult = workAnInterval(expression, backwardX, xInCurrentInterval);
 
     // work inside interval - forward
-    const forwardResult = workAnInterval(func, forwardX, xInCurrentInterval);
+    const forwardResult = workAnInterval(expression, forwardX, xInCurrentInterval);
 
     // finish up interval
     lastXinPreviousInterval = forwardResult.lastValidXinCurrentInterval;

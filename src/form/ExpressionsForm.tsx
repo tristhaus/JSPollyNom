@@ -1,5 +1,6 @@
 import { FormValues } from "../types";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik';
+import { parse } from "../service/parser";
 
 interface Props {
   onSubmit: (values: FormValues) => void;
@@ -9,15 +10,25 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
   return (
     <Formik
       initialValues={{
-        expressions: ["Math.sqrt(x)"]
+        expressions: ["sqrt(x^3)"]
       }}
       onSubmit={onSubmit}
       validate={(values) => {
         const requiredError = "Field is required";
-        const errors: { [field: string]: string } = {};
+        const invalidError = "Expression is not valid";
+        const errors: { [field: string]: string[] } = {};
         if (!values.expressions) {
-          errors.expressions = requiredError;
+          // use knowledge that there is just one field right now
+          errors.expressions = [requiredError];
         }
+
+        const parseResults = values.expressions.map(expression => parse(expression));
+
+        if (parseResults.some(result => result === null)) {
+          // use knowledge that there is just one field right now
+          errors.expressions = [invalidError];
+        }
+
         return errors;
       }}
     >
@@ -35,7 +46,7 @@ export const ExpressionsForm = ({ onSubmit }: Props) => {
                           <Field
                             style={{ width: '70%' }}
                             name={`expressions.${index}`}
-                            placeholder="Math.sqrt(x)"
+                            placeholder="sqrt(x)"
                             type="text"
                           />
                           <ErrorMessage

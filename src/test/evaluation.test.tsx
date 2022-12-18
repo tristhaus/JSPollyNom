@@ -1,9 +1,8 @@
 import { createBranches, Data, transform, TransformedData } from "../service/evaluation";
+import { Constant, Factor, NaturalLogarithm, Power, Product, SquareRoot, Tangent, X } from "../service/expressions";
 
-test('for x^2, create two branches', () => {
-  const f = (x: number): number => {
-    return x ** 2;
-  };
+test('for x^2, create one branch', () => {
+  const f = new Power(new X(), new Constant(2.0));
 
   const result = createBranches(f);
 
@@ -11,9 +10,7 @@ test('for x^2, create two branches', () => {
 });
 
 test('for 1/x, create two branches', () => {
-  const f = (x: number): number => {
-    return 1.0 / x;
-  };
+  const f = new Product([new Factor(true, new Constant(1.0)), new Factor(false, new X())]);
 
   const result = createBranches(f);
 
@@ -21,9 +18,7 @@ test('for 1/x, create two branches', () => {
 });
 
 test('for tan(x), create seven branches', () => {
-  const f = (x: number): number => {
-    return Math.tan(x);
-  };
+  const f = new Tangent(new X());
 
   const result = createBranches(f);
 
@@ -31,9 +26,7 @@ test('for tan(x), create seven branches', () => {
 });
 
 test('for ln(x), create one correct branch', () => {
-  const f = (x: number): number => {
-    return Math.log(x);
-  };
+  const f = new NaturalLogarithm(new X());
 
   const result = createBranches(f);
 
@@ -41,11 +34,8 @@ test('for ln(x), create one correct branch', () => {
   expect(result[0][0].x).toBeGreaterThan(0.0);
 });
 
-test('for sqrt(-1), create no branches', () => { // todo : check if this conforms to the use case in plotly
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const f = (_x: number): number => {
-    return Math.sqrt(-1);
-  };
+test('for sqrt(-1), create no branches', () => {
+  const f = new SquareRoot(new Constant(-1.0));
 
   const result = createBranches(f);
 
