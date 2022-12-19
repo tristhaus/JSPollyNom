@@ -1,5 +1,6 @@
 import { Datum as PlotlyDatum } from 'plotly.js';
 import { Expression } from '../types';
+import { parse } from './parser';
 
 export interface Pair {
   x: number;
@@ -170,4 +171,11 @@ export const transform = (data: Data): TransformedData[] => {
     });
 
   return retval;
+};
+
+export const evaluate = (expression: string): Data => {
+  const func = parse(expression);
+  const branches: Pair[][] = func ? createBranches(func) : [];
+
+  return [branches];
 };

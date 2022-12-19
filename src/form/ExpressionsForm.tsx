@@ -1,12 +1,18 @@
 import { FormValues } from "../types";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from 'formik';
 import { parse } from "../service/parser";
+import { useAppDispatch } from "../hooks";
+import { updateExpression } from "../reducers/game";
 
-interface Props {
-  onSubmit: (values: FormValues) => void;
-}
+export const ExpressionsForm = () => {
 
-export const ExpressionsForm = ({ onSubmit }: Props) => {
+  const dispatch = useAppDispatch();
+
+  const onSubmit = (values: FormValues) => {
+    // use knowledge that there is just one field right now
+    dispatch(updateExpression(values.expressions[0]));
+  };
+
   return (
     <Formik
       initialValues={{
