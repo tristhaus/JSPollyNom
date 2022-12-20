@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { Data as PlotlyData, Shape as PlotlyShape } from 'plotly.js';
 import { useAppSelector } from '../hooks';
@@ -81,37 +82,55 @@ const PlotContainer = () => {
 
   const score = useAppSelector(state => state.game.score);
 
-  return (
-    <div style={{ height: 0, width: '100%', paddingBottom: '100%', position: 'relative' }}>
-      <Plot
-        data={plotlyData}
-        layout={{
-          title: `score: ${score}`,
-          legend: {
-            itemclick: false,
-            itemdoubleclick: false,
-          },
-          xaxis: {
-            range: [-10, 10]
-          },
-          yaxis: {
-            range: [-10, 10],
-            scaleanchor: 'x',
-          },
-          modebar: {
-            remove: ['autoScale2d', 'lasso2d', 'pan2d', 'select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d'],
-          },
-          shapes: shapes,
-          autosize: true,
-        }}
-        config={{
-          doubleClick: 'reset',
-          responsive: true,
-        }}
-        style={{ position: 'absolute', width: '100%', height: '100%' }}
-      />
-    </div>
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerHeight);
 
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => window.removeEventListener("resize", handleWindowResize);
+  }, []);
+
+  const availableHeight = height - 120;
+  const effectiveMeasure = Math.min(availableHeight, width);
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ height: 0, width: effectiveMeasure, paddingBottom: effectiveMeasure, position: 'relative' }}>
+        <Plot
+          data={plotlyData}
+          layout={{
+            title: `score: ${score}`,
+            legend: {
+              itemclick: false,
+              itemdoubleclick: false,
+            },
+            xaxis: {
+              range: [-10, 10]
+            },
+            yaxis: {
+              range: [-10, 10],
+              scaleanchor: 'x',
+            },
+            modebar: {
+              remove: ['autoScale2d', 'lasso2d', 'pan2d', 'select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d'],
+            },
+            shapes: shapes,
+            autosize: true,
+          }}
+          config={{
+            doubleClick: 'reset',
+            responsive: true,
+          }}
+          style={{ position: 'absolute', width: '100%', height: '100%' }}
+        />
+      </div>
+    </div>
   );
 };
 
