@@ -21,8 +21,9 @@
   margin-top: 10px;
 }
 
-.helpButton {
-  transform: translateX(90vw);
+.topLine {
+  display: flex;
+  justify-content: space-between;
 }
 
 .overlayBox {

@@ -7,3 +7,10 @@ export interface Expression {
   isEquivalentTo(other: Expression): boolean;
   readonly expressionType: string;
 }
+
+export enum Problem {
+  SquarePolynomial = "SquarePolynomial",
+  Sine = "Sine",
+  Rationals = "Rationals",
+  Gaussian = "Gaussian",
+}
