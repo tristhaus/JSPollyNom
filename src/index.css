@@ -10,6 +10,22 @@
   text-align: center;
 }
 
+a:link.noUnderlineLink {
+  text-decoration: none;
+}
+
+a:visited.noUnderlineLink {
+  text-decoration: none;
+}
+
+a:hover.noUnderlineLink {
+  text-decoration: none;
+}
+
+a:active.noUnderlineLink {
+  text-decoration: none;
+}
+
 .plotButton,
 .overlayButton,
 .helpButton {
