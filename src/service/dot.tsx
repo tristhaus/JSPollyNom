@@ -298,8 +298,8 @@ export const getDotsWithStatus = (goodDots: Dot[], badDots: Dot[], data: Data): 
 
 export const calculateScore = (dots: Dots): number => {
   if (dots.badActive.length > 0) {
-    return -1;
+    return 0;
   }
 
-  return 2 ** dots.goodActive.length - 1;
+  return Math.floor(dots.goodActive.length / (dots.goodActive.length + dots.goodInactive.length) * 100);
 };

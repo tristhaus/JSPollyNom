@@ -72,7 +72,7 @@ test('combined dot evaluation works correctly', () => {
   expect(result.badInactive).toHaveLength(0);
 });
 
-test('bad dots cause a negative score', () => {
+test('bad dots cause a zero score', () => {
   const dots: Dots = {
     goodActive: [
       { x: 0, y: 0, radius: 1 },
@@ -92,7 +92,7 @@ test('bad dots cause a negative score', () => {
 
   const result = calculateScore(dots);
 
-  expect(result).toBeLessThan(0);
+  expect(result).toBe(0);
 });
 
 test('all dots inactive causes a zero score', () => {
@@ -115,7 +115,7 @@ test('all dots inactive causes a zero score', () => {
   expect(result).toBe(0);
 });
 
-test('good dots cause a positive score of 1', () => {
+test('good dots cause a partial positive score of 25', () => {
   const dots: Dots = {
     goodActive: [
       { x: 0, y: 0, radius: 1 },
@@ -135,10 +135,10 @@ test('good dots cause a positive score of 1', () => {
 
   const result = calculateScore(dots);
 
-  expect(result).toBe(1);
+  expect(result).toBe(25);
 });
 
-test('good dots cause a positive score of 3', () => {
+test('good dots cause a partial positive score of 50', () => {
   const dots: Dots = {
     goodActive: [
       { x: 0, y: 0, radius: 1 },
@@ -158,5 +158,5 @@ test('good dots cause a positive score of 3', () => {
 
   const result = calculateScore(dots);
 
-  expect(result).toBe(3);
+  expect(result).toBe(50);
 });

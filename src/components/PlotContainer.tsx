@@ -105,7 +105,7 @@ const PlotContainer = () => {
         <Plot
           data={plotlyData}
           layout={{
-            title: `score: ${score}`,
+            title: `score: ${score}%`,
             legend: {
               itemclick: false,
               itemdoubleclick: false,
