@@ -25,7 +25,7 @@ The named functions require that the argument be placed in parentheses. A valid 
 
     abs(x^2.3 + x*(sin(x)))
 
-If deployed, JSPollyNom is at [jspollynom.fly.dev](https://jspollynom.fly.dev).
+JSPollyNom is currently not deployed.
 
 ## For Developers
 
