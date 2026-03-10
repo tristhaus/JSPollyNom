@@ -28,7 +28,7 @@ export class Constant implements Expression {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  evaluate(x: number): number | null {
+  evaluate(_x: number): number | null {
     return this.c;
   }
 

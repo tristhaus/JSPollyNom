@@ -22,8 +22,8 @@ export const ExpressionsForm = () => {
       validate={(values) => {
         const requiredError = "Field is required";
         const invalidError = "Expression is not valid";
-        const errors: { [field: string]: string[] } = {};
-        if (!values.expressions) {
+        const errors: Record<string, string[]> = {};
+        if (values.expressions.length === 0) {
           // use knowledge that there is just one field right now
           errors.expressions = [requiredError];
         }
@@ -45,18 +45,18 @@ export const ExpressionsForm = () => {
               {() => (
                 <div>
                   {values.expressions.length > 0 &&
-                    values.expressions.map((friend, index) => (
+                    values.expressions.map((_friend, index) => (
                       <div className="row" key={index}>
                         <div className="col centering">
-                          <label htmlFor={`expressions.${index}`}>f(x) = </label>
+                          <label htmlFor={`expressions.${index.toFixed(0)}`}>f(x) = </label>
                           <Field
                             style={{ width: '70%' }}
-                            name={`expressions.${index}`}
+                            name={`expressions.${index.toFixed(0)}`}
                             placeholder="sqrt(x)"
                             type="text"
                           />
                           <ErrorMessage
-                            name={`expressions.${index}`}
+                            name={`expressions.${index.toFixed(0)}`}
                             component="div"
                             className="field-error"
                           />

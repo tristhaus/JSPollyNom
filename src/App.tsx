@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {  useCallback, useEffect, useState } from 'react';
 
 import ExpressionsForm from './form/ExpressionsForm';
 
@@ -17,18 +17,18 @@ const App = () => {
 
   const dispatch = useAppDispatch();
 
-  const changeProblem = (newProblem: Problem) => {
+  const changeProblem = useCallback((newProblem: Problem) => {
     setProblem(newProblem);
     const { goodDots, badDots } = generateDots(newProblem);
 
     dispatch(reset({ goodInactive: goodDots, badInactive: badDots, goodActive: [], badActive: [] }));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     changeProblem(problem);
     dispatch(updateExpression('sqrt(x^3)'));
 
-  }, []);
+  }, [changeProblem, dispatch, problem]);
 
   const handleProblemSelectChange = (newValue: Problem) => {
     changeProblem(newValue);
@@ -42,15 +42,15 @@ const App = () => {
   return (
     <div>
       <div className="topLine">
-        <select value={problem} onChange={e => handleProblemSelectChange(e.target.value as Problem)}>
+        <select value={problem} onChange={e => { handleProblemSelectChange(e.target.value as Problem)}}>
           <option value={Problem.SquarePolynomial}>Level 1 - easy</option>
           <option value={Problem.Sine}>Level 2 - medium</option>
           <option value={Problem.Rationals}>Level 3 - medium</option>
           <option value={Problem.Gaussian}>Level 4 - hard</option>
         </select>
-        <button className="helpButton" onClick={() => handleToggleShowHelp()}>?</button>
+        <button className="helpButton" onClick={() => {handleToggleShowHelp()}}>?</button>
       </div>
-      {showHelp && (<OverlayMessageBox label="OK" action={() => handleToggleShowHelp()} beModal={false}>
+      {showHelp && (<OverlayMessageBox label="OK" action={() => {handleToggleShowHelp()}} beModal={false}>
         <HelpContent />
       </OverlayMessageBox>)}
       <PlotContainer />

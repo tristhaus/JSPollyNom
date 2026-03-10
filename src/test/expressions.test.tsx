@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest'
 import { AbsoluteValue, Constant, Cosine, Factor, NaturalExponential, NaturalLogarithm, Power, Product, Sine, SquareRoot, Sum, Summand, Tangent, X } from '../service/expressions';
 
 test('X yields given value', () => {

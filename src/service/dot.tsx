@@ -257,7 +257,7 @@ export const generateDots = (problem: Problem): { goodDots: Dot[], badDots: Dot[
       return createGaussian();
       break;
     default:
-      throw Error(`${problem} not implemented`);
+      throw Error('problem not implemented');
       break;
   }
 };

@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest'
 import { createBranches, Data, transform, TransformedData } from "../service/evaluation";
 import { Constant, Factor, NaturalLogarithm, Power, Product, SquareRoot, Tangent, X } from "../service/expressions";
 

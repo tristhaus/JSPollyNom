@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { Data as PlotlyData, Shape as PlotlyShape } from 'plotly.js';
+import { Data as PlotlyData, PlotData as PlotlyPlotData, Shape as PlotlyShape } from 'plotly.js';
 import { useAppSelector } from '../hooks';
-import { transform } from '../service/evaluation';
+import { Data, transform } from '../service/evaluation';
 import { Dot } from '../service/dot';
 
-const getGraphData = (): PlotlyData[] => {
-
-  const graphData = useAppSelector(state => state.game.graphData);
+const mapGraphData = (graphData: Data): PlotlyData[] => {
 
   const transformedGraphData = transform(graphData);
 
@@ -19,12 +17,12 @@ const getGraphData = (): PlotlyData[] => {
     '#B0E0E6'  // PowderBlue
   ];
 
-  const decoratedGraphData = transformedGraphData.map<PlotlyData>((tdo, index) => {
+  const decoratedGraphData = transformedGraphData.map<Partial<PlotlyPlotData>>((tdo, index) => {
     return {
       ...tdo,
       type: 'scatter',
       mode: 'lines',
-      name: `f ${index + 1}`,
+      name: `f ${(index + 1).toFixed(0)}`,
       marker: { color: graphColors[index] },
       connectgaps: false,
     };
@@ -33,7 +31,7 @@ const getGraphData = (): PlotlyData[] => {
   return decoratedGraphData;
 };
 
-const getDotInformation = (): Partial<PlotlyShape>[] => {
+const getDotInformation = (goodDotsActive: Dot[], goodDotsInactive: Dot[], badDotsActive: Dot[], badDotsInactive: Dot[] ): Partial<PlotlyShape>[] => {
 
   const dotColors = {
     goodActive: '#00008B',   // DarkBlue 
@@ -59,11 +57,6 @@ const getDotInformation = (): Partial<PlotlyShape>[] => {
     };
   };
 
-  const goodDotsActive = useAppSelector(state => state.game.goodDotsActive);
-  const goodDotsInactive = useAppSelector(state => state.game.goodDotsInactive);
-  const badDotsActive = useAppSelector(state => state.game.badDotsActive);
-  const badDotsInactive = useAppSelector(state => state.game.badDotsInactive);
-
   const shapes: Partial<PlotlyShape>[] = [
     ...goodDotsActive.map(dot => createDotShape(dot, dotColors.goodActive)),
     ...goodDotsInactive.map(dot => createDotShape(dot, dotColors.goodInactive)),
@@ -76,9 +69,14 @@ const getDotInformation = (): Partial<PlotlyShape>[] => {
 
 const PlotContainer = () => {
 
-  const plotlyData = getGraphData();
+  const graphData = useAppSelector(state => state.game.graphData);
+  const plotlyData = mapGraphData(graphData);
 
-  const shapes = getDotInformation();
+  const goodDotsActive: Dot[] = useAppSelector(state => state.game.goodDotsActive);
+  const goodDotsInactive: Dot[] = useAppSelector(state => state.game.goodDotsInactive);
+  const badDotsActive: Dot[] = useAppSelector(state => state.game.badDotsActive);
+  const badDotsInactive: Dot[] = useAppSelector(state => state.game.badDotsInactive);
+  const shapes = getDotInformation(goodDotsActive, goodDotsInactive, badDotsActive, badDotsInactive);
 
   const score = useAppSelector(state => state.game.score);
 
@@ -93,7 +91,7 @@ const PlotContainer = () => {
 
     window.addEventListener("resize", handleWindowResize);
 
-    return () => window.removeEventListener("resize", handleWindowResize);
+    return () => { window.removeEventListener("resize", handleWindowResize); };
   }, []);
 
   const availableHeight = height - 120;
@@ -105,7 +103,7 @@ const PlotContainer = () => {
         <Plot
           data={plotlyData}
           layout={{
-            title: `score: ${score}%`,
+            title: `score: ${score.toFixed(0)}%`,
             legend: {
               itemclick: false,
               itemdoubleclick: false,

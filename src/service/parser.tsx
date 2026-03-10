@@ -153,8 +153,8 @@ const parseToSum = (tokens: string[], ops: string[]): Sum | null => {
   let token = tokens[0];
   tokens.splice(0, 1);
 
-  for (let opsIndex = 0; opsIndex < ops.length; opsIndex++) {
-    if (ops[opsIndex] === "+" || ops[opsIndex] === "-") {
+  for (const op of ops) {
+    if (op === "+" || op === "-") {
       const expression = internalParse(token);
       if (expression === null) {
         return null;
@@ -163,10 +163,10 @@ const parseToSum = (tokens: string[], ops: string[]): Sum | null => {
       targetList.push(new Summand(isPositive, expression));
       token = tokens[0];
       tokens.splice(0, 1);
-      isPositive = ops[opsIndex] === "+";
+      isPositive = op === "+";
     }
     else {
-      token += ops[opsIndex] + tokens[0];
+      token += op + tokens[0];
       tokens.splice(0, 1);
     }
   }
@@ -199,8 +199,8 @@ const parseToProduct = (tokens: string[], ops: string[]): Product | null => {
 
   let token = tokens.shift() as string;
 
-  for (let opsIndex = 0; opsIndex < ops.length; opsIndex++) {
-    if (ops[opsIndex] === "*" || ops[opsIndex] === "/") {
+  for (const op of ops) {
+    if (op === "*" || op === "/") {
       const expression = internalParse(token);
       if (expression === null) {
         return null;
@@ -208,10 +208,10 @@ const parseToProduct = (tokens: string[], ops: string[]): Product | null => {
 
       targetList.push(new Factor(isMultiplicative, expression));
       token = tokens.shift() as string;
-      isMultiplicative = ops[opsIndex] === "*";
+      isMultiplicative = op === "*";
     }
     else {
-      token += ops[opsIndex] + tokens.shift();
+      token += op + (tokens.shift() as string);
     }
   }
 
@@ -258,7 +258,7 @@ const parseToPower = (tokens: string[], ops: string[]): Power | null => {
 
 const parseToFunction = (tokens: string[]): Expression | null => {
 
-  const theMap: Array<{ name: string, creator: (argument: Expression) => Expression }> =
+  const theMap: { name: string, creator: (argument: Expression) => Expression }[] =
     [
       { name: 'abs', creator: (argument: Expression): Expression => new AbsoluteValue(argument) },
       { name: 'sin', creator: (argument: Expression): Expression => new Sine(argument) },
@@ -296,7 +296,7 @@ const internalParse = (input: string): Expression | null => {
   }
 
   // if fully enclosed in braces, we remove them
-  if (input[0] == '(' && input.length - 1 === findIndexOfMatchingRoundBracket(input, 0)) {
+  if (input.startsWith('(') && input.length - 1 === findIndexOfMatchingRoundBracket(input, 0)) {
     return internalParse(input.substring(1, input.length - 1));
   }
 
@@ -323,7 +323,7 @@ const internalParse = (input: string): Expression | null => {
       return null;
     }
 
-    if (input[0] === '-') {
+    if (input.startsWith('-')) {
       return new Sum([new Summand(false, bracketedExpression)]);
     }
     else {

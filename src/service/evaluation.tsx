@@ -64,7 +64,7 @@ const workAnInterval = (expression: Expression, direction: (x: number) => number
     yOptional = expression.evaluate(x);
 
     if (isValidResult(yOptional)) {
-      y = yOptional as number;
+      y = yOptional;
       interrupt = !(minX <= x && x <= maxX && -Limit <= y && y <= Limit);
     }
 

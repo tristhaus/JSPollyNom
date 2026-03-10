@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest'
 import { calculateScore, Dot, Dots, getDotsWithStatus } from '../service/dot';
 import { Data } from '../service/evaluation';
 

@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest'
 import { AbsoluteValue, Constant, Cosine, Factor, NaturalExponential, NaturalLogarithm, Power, Product, Sine, SquareRoot, Sum, Summand, Tangent, X } from "../service/expressions";
 import { findIndexOfMatchingRoundBracket, parse, tokenize } from "../service/parser";
 
@@ -133,13 +134,8 @@ test.each([
 ])('sums should parse ($text)', (input) => {
   const result = parse(input.text);
 
-  if (input.reference === null) {
-    expect(result).toBeNull();
-  }
-  else {
     expect(result).not.toBeNull();
     expect(result?.isEquivalentTo(input.reference)).toBe(true);
-  }
 });
 
 test.each([
@@ -166,13 +162,8 @@ test.each([
 ])('mix of sum and product should parse ($text)', (input) => {
   const result = parse(input.text);
 
-  if (input.reference === null) {
-    expect(result).toBeNull();
-  }
-  else {
     expect(result).not.toBeNull();
     expect(result?.isEquivalentTo(input.reference)).toBe(true);
-  }
 });
 
 test.each([
@@ -182,13 +173,8 @@ test.each([
 ])('powers should parse ($text)', (input) => {
   const result = parse(input.text);
 
-  if (input.reference === null) {
-    expect(result).toBeNull();
-  }
-  else {
     expect(result).not.toBeNull();
     expect(result?.isEquivalentTo(input.reference)).toBe(true);
-  }
 });
 
 test.each([
