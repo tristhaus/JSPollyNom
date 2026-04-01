@@ -13,4 +13,6 @@ export enum Problem {
   Sine = "Sine",
   Rationals = "Rationals",
   Gaussian = "Gaussian",
+  HalfCircle = "HalfCircle",
+  Piecewise = "Piecewise",
 }

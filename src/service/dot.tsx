@@ -243,6 +243,86 @@ export const generateDots = (problem: Problem): { goodDots: Dot[], badDots: Dot[
     return { goodDots: goodDots, badDots: badDots };
   };
 
+  const createHalfCircle = (): { goodDots: Dot[], badDots: Dot[] } => {
+    const goodDots: Dot[] =
+      [
+        { x: 0, y: 2.5, radius: defaultRadius },
+        { x: 0.5, y: 1, radius: defaultRadius },
+        { x: 1.5, y: 0.25, radius: defaultRadius },
+        { x: 2.5, y: 0, radius: defaultRadius },
+        { x: 3.5, y: 0.25, radius: defaultRadius },
+        { x: 4.5, y: 1, radius: defaultRadius },
+        { x: 5, y: 2.5, radius: defaultRadius },
+      ];
+
+    const badDots: Dot[] =
+      [
+        { x: -0.6, y: 2.5, radius: defaultRadius },
+        { x: -0.3, y: 1.5, radius: defaultRadius },
+        { x: 0, y: 3.1, radius: defaultRadius },
+        { x: 0, y: 0.5, radius: defaultRadius },
+        { x: 0.8, y: 1.6, radius: defaultRadius },
+        { x: 0.8, y: 0.0, radius: defaultRadius },
+        { x: 0.6, y: 2.5, radius: defaultRadius },
+        { x: 1.5, y: 0.85, radius: defaultRadius },
+        { x: 2.0, y: -0.5, radius: defaultRadius },
+        { x: 2.5, y: 0.6, radius: defaultRadius },
+        { x: 3.0, y: -0.5, radius: defaultRadius },
+        { x: 3.5, y: 0.85, radius: defaultRadius },
+        { x: 4.2, y: 1.6, radius: defaultRadius },
+        { x: 4.2, y: 0.0, radius: defaultRadius },
+        { x: 4.4, y: 2.5, radius: defaultRadius },
+        { x: 5, y: 3.1, radius: defaultRadius },
+        { x: 5, y: 0.5, radius: defaultRadius },
+        { x: 5.3, y: 1.5, radius: defaultRadius },
+        { x: 5.6, y: 2.5, radius: defaultRadius },
+      ];
+
+    return { goodDots: goodDots, badDots: badDots };
+  };
+
+  const createPiecewise = (): { goodDots: Dot[], badDots: Dot[] } => {
+    const goodDots: Dot[] =
+      [
+        { x: 0, y: 0, radius: defaultRadius },
+        { x: 2, y: 1, radius: defaultRadius },
+        { x: 4, y: 2, radius: defaultRadius },
+        { x: 6, y: 3, radius: defaultRadius },
+        { x: 8, y: 4, radius: defaultRadius },
+      ];
+
+    const badDots: Dot[] =
+      [
+        { x: -0.5, y: 0.55, radius: defaultRadius },
+        { x: -0.75, y: 0.0, radius: defaultRadius },
+        { x: -0.5, y: -0.55, radius: defaultRadius },
+        { x: 0, y: 1, radius: defaultRadius },
+        { x: 0.5, y: 1.25, radius: defaultRadius },
+        { x: 1, y: 1.5, radius: defaultRadius },
+        { x: 1.5, y: 1.75, radius: defaultRadius },
+        { x: 2, y: 2, radius: defaultRadius },
+        { x: 3, y: 2.5, radius: defaultRadius },
+        { x: 4, y: 3, radius: defaultRadius },
+        { x: 5, y: 3.5, radius: defaultRadius },
+        { x: 6, y: 4, radius: defaultRadius },
+        { x: 7, y: 4.5, radius: defaultRadius },
+        { x: 8, y: 5, radius: defaultRadius },
+        { x: 0, y: -1, radius: defaultRadius },
+        { x: 0.5, y: -0.75, radius: defaultRadius },
+        { x: 1, y: -0.5, radius: defaultRadius },
+        { x: 1.5, y: -0.25, radius: defaultRadius },
+        { x: 2, y: 0, radius: defaultRadius },
+        { x: 3, y: 0.5, radius: defaultRadius },
+        { x: 4, y: 1, radius: defaultRadius },
+        { x: 5, y: 1.5, radius: defaultRadius },
+        { x: 6, y: 2, radius: defaultRadius },
+        { x: 7, y: 2.5, radius: defaultRadius },
+        { x: 8, y: 3, radius: defaultRadius },
+      ];
+
+    return { goodDots: goodDots, badDots: badDots };
+  };
+
   switch (problem) {
     case Problem.SquarePolynomial:
       return createSquarePolynomial();
@@ -255,6 +335,12 @@ export const generateDots = (problem: Problem): { goodDots: Dot[], badDots: Dot[
       break;
     case Problem.Gaussian:
       return createGaussian();
+      break;
+    case Problem.HalfCircle:
+      return createHalfCircle();
+      break;
+    case Problem.Piecewise:
+      return createPiecewise();
       break;
     default:
       throw Error('problem not implemented');

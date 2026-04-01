@@ -47,6 +47,8 @@ const App = () => {
           <option value={Problem.Sine}>Level 2 - medium</option>
           <option value={Problem.Rationals}>Level 3 - medium</option>
           <option value={Problem.Gaussian}>Level 4 - hard</option>
+          <option value={Problem.HalfCircle}>Level 5 - medium</option>
+          <option value={Problem.Piecewise}>Level 6 - medium</option>
         </select>
         <button className="helpButton" onClick={() => {handleToggleShowHelp()}}>?</button>
       </div>
